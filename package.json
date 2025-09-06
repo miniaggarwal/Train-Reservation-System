@@ -1,0 +1,25 @@
+{
+  "name": "train-reservation-system",
+  "version": "1.0.0",
+  "description": "Train reservation System using OpenAI",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "nodemon src/index.ts",
+    "build": "tsc",
+    "watch": "tsc -w",
+    "start": "nodemon dist/index.js"
+  },
+  "author": "Priyanka Agarwal",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^17.2.2",
+    "nodemon": "^3.1.10",
+    "openai": "^5.19.1",
+    "tiktoken": "^1.0.22"
+  },
+  "devDependencies": {
+    "@types/node": "^24.3.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
+  }
+}
