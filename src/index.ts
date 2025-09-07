@@ -4,14 +4,14 @@ dotenv.config();
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_KEY });
 
-const getTrainsBetweenStations = async (origin: string, destination: string) => {
+const getTrainsBetweenStations = (origin: string, destination: string): string[] => {
     // Mock data for demonstration purposes
     if (origin === "Delhi" && destination === "Mumbai") {
         return ["Rajdhani Express", "Duronto Express", "Garib Rath"];
     } else if (origin === "Mumbai" && destination === "Delhi") {
         return ["August Kranti Rajdhani", "Mumbai Rajdhani", "Paschim Express"];
     } else {
-        ["Premium Train 1", "Premium Train 2", "Premium Train 3"];
+        return ["Premium Train 1", "Premium Train 2", "Premium Train 3"];
     }
 };
 
@@ -57,7 +57,7 @@ const callopenAIWithFunctions = async () => {
                             },
                         },
 
-                        required: ["Origin", "Destination"]
+                        required: ["origin", "destination"]
 
                     },
                 },
@@ -89,16 +89,20 @@ const callopenAIWithFunctions = async () => {
         tool_choice: "auto"
     });
 
-
     const shouldInvokeFunction = response.choices[0]?.finish_reason === "tool_calls"
 
     const toolCall = response.choices[0]?.message.tool_calls?.[0]
 
-    if (!toolCall) {
+    
+
+    if (!shouldInvokeFunction && !toolCall) {
+        console.log(response.choices[0]?.message.content);
+        history.push(response.choices[0]?.message!);
         return;
     }
 
-    if (shouldInvokeFunction && toolCall.type === "function") {
+
+
         const functionName = toolCall.function.name
 
         if (functionName === "getTrainsBetweenStations") {
@@ -142,18 +146,18 @@ const callopenAIWithFunctions = async () => {
             temperature: 0,
         });
 
-        console.log(finalResponse.choices[0]?.message);
+        console.log(finalResponse.choices[0]?.message.content);
 
 
 
-    }
+    
 }
 
 process.stdin.addListener("data", async (data) => {
     const userInput = data.toString().trim();
     history.push({
         role: "user",
-        content: data.toString().trim(),
+        content: userInput,
     });
     await callopenAIWithFunctions();
 }); 
